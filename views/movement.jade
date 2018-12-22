@@ -43,7 +43,7 @@ block content
             for ( var i=0;i<json.data.length; i++ ) {
               json.data[i]['timestamp'] = format_unixtime(json.data[i]['timestamp']);
               json.data[i]['txid'] = "<a href='/tx/" + json.data[i]['txid'] + "' target='_blank'>" + json.data[i]['txid'] + "</a>"
-              var amount = json.data[i]['total'] / 100000000;
+              var amount = json.data[i]['total'] / 10000;
               if (amount > '#{flagb}') {
                 json .data[i]['total'] = "<label class='label label-danger'>" + amount + "</label>";
               } else if (amount > '#{flaga}') {
