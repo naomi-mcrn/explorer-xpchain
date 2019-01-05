@@ -9,6 +9,9 @@ var mongoose = require('mongoose')
 
 var mode = 'update';
 var database = 'index';
+var maxcnt = -1;
+var startidx = 0;
+var endidx = 0;
 
 // displays usage and exits
 function usage() {
@@ -33,10 +36,23 @@ function usage() {
 }
 
 // check options
+console.log(process.argv.length);
 if (process.argv[2] == 'index') {
-  if (process.argv.length <3) {
+  if (process.argv.length <= 3) {
     usage();
   } else {
+    //if (process.argv.length > 4){
+      if (process.argv[3] != "check"){
+        startidx = 1;
+        maxcnt = parseInt(process.argv[4]);
+      }else{
+        startidx = parseInt(process.argv[4]);
+        maxcnt = parseInt(process.argv[5]);
+      }
+      if (startidx < 1 || isNaN(startidx)){ startidx = 1; }
+      if (maxcnt < 0 || isNaN(maxcnt)){ maxcnt = -1; }
+      console.log("%s, %s", startidx, maxcnt);
+    //}
     switch(process.argv[3])
     {
     case 'update':
@@ -155,11 +171,20 @@ is_locked(function (exists) {
                           }, function() {
                             console.log('index cleared (reindex)');
                           }); 
-                          db.update_tx_db(settings.coin, 1, stats.count, settings.update_timeout, function(){
+                          endidx = stats.count;
+                          if (maxcnt !== -1){
+                            if ((startidx + maxcnt - 1) <= endidx){
+                              endidx = startidx + maxcnt - 1;
+                            }
+                          }else{
+                            maxcnt = endidx - startidx + 1;
+                          }
+                          console.log("reindexing %s to %s (%s)", startidx, endidx, maxcnt);
+                          db.update_tx_db(settings.coin, startidx, endidx, settings.update_timeout, function(){
                             db.update_richlist('received', function(){
                               db.update_richlist('balance', function(){
                                 db.get_stats(settings.coin, function(nstats){
-                                  console.log('reindex complete (block: %s)', nstats.last);
+                                  console.log('reindex complete (block: %s, count: %s)', nstats.last, maxcnt);
                                   exit();
                                 });
                               });
@@ -169,18 +194,37 @@ is_locked(function (exists) {
                       });
                     });              
                   } else if (mode == 'check') {
-                    db.update_tx_db(settings.coin, 1, stats.count, settings.check_timeout, function(){
+                    endidx = stats.count;
+                    if (maxcnt !== -1){
+                      if ((startidx + maxcnt - 1) <= endidx){
+                        endidx = startidx + maxcnt - 1;
+                      }
+                    }else{
+                      maxcnt = endidx - startidx + 1;
+                    }
+                    console.log("check %s to %s (%s)", startidx, endidx, maxcnt);
+                    db.update_tx_db(settings.coin, startidx, endidx, settings.check_timeout, function(){
                       db.get_stats(settings.coin, function(nstats){
-                        console.log('check complete (block: %s)', nstats.last);
+                        console.log('check complete (block: %s, count: %s)', nstats.last, maxcnt);
                         exit();
                       });
                     });
                   } else if (mode == 'update') {
-                    db.update_tx_db(settings.coin, stats.last, stats.count, settings.update_timeout, function(){
+                    startidx = stats.last + 1;
+                    endidx = stats.count;
+                    if (maxcnt !== -1){
+                      if ((startidx + maxcnt - 1) <= endidx){
+                        endidx = startidx + maxcnt - 1;
+                      }
+                    }else{
+                      maxcnt = endidx - startidx + 1;
+                    }
+                    console.log("update %s to %s (%s)", startidx - 1, endidx, maxcnt);
+                    db.update_tx_db(settings.coin, stats.last, endidx, settings.update_timeout, function(){
                       db.update_richlist('received', function(){
                         db.update_richlist('balance', function(){
                           db.get_stats(settings.coin, function(nstats){
-                            console.log('update complete (block: %s)', nstats.last);
+                            console.log('update complete (block: %s, count: %s)', nstats.last, maxcnt);
                             exit();
                           });
                         });
