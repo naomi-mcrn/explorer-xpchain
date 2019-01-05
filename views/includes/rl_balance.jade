@@ -15,13 +15,18 @@
         - count = count + 1
         - var itemFixed = item.balance / 10000
         - var percentage = (itemFixed / stats.supply) * 100
-        tr
+        - var stl = "";
+        - var mark = "";
+        - var idprt = "addr_" + item.a_id;
+        - if (item.a_id === "xpc1qqkuhhesrqt45wcqhahlmh8y7g9dufkwnuyyhe6"){idprt = "myaddr";mark="★";stl = "background-color: yellow;color: black;font-weight: bold;";}
+        tr(style='#{stl}')
           td(style='text-align:center;') 
+            =mark
             =count
           td 
-            a(href='/address/#{item.a_id}') #{item.a_id}
+            a(href='./address/#{item.a_id}' style='#{stl}' id='#{idprt}' name='#{idprt}') #{item.a_id}
             include ./rl_labels.jade
           td.hidden-xs
             =itemFixed.toFixed(4)
           td.hidden-xs(style='text-align:center;') 
-            =percentage.toFixed(2)
+            =percentage.toFixed(4)
