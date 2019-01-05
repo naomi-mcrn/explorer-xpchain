@@ -121,6 +121,35 @@ function route_get_address(res, hash, count) {
   });
 }
 
+function route_get_address_with_rank(res, hash, count) {
+  db.get_richrank(hash, function(address) {
+    if (address) {
+      var txs = [];
+      var hashes = address.txs.reverse();
+      if (address.txs.length < count) {
+        count = address.txs.length;
+      }
+      lib.syncLoop(count, function (loop) {
+        var i = loop.iteration();
+        db.get_tx(hashes[i].addresses, function(tx) {
+          if (tx) {
+            txs.push(tx);
+            loop.next();
+          } else {
+            loop.next();
+          }
+        });
+      }, function(){
+
+        res.render('address', { active: 'address', address: address, txs: txs});
+      });
+
+    } else {
+      route_get_index(res, hash + ' not found');
+    }
+  });
+}
+
 /* GET home page. */
 router.get('/', function(req, res) {
   route_get_index(res, null);
@@ -226,7 +255,7 @@ router.get('/block/:hash', function(req, res) {
 });
 
 router.get('/address/:hash', function(req, res) {
-  route_get_address(res, req.param('hash'), settings.txcount);
+  route_get_address_with_rank(res, req.param('hash'), settings.txcount);
 });
 
 router.get('/address/:hash/:count', function(req, res) {
