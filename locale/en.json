@@ -73,7 +73,9 @@
     "rl_top50": "Top 26-50",
     "rl_top75": "Top 51-75",
     "rl_top100": "Top 76-100",
-    "rl_hundredplus": "101+",
+    "rl_top1000": "Top 101-1000",
+    "rl_top2000": "Top 1001-2000",
+    "rl_hundredplus": "2001+",
 
     "net_connections": "Connections",
     "net_address": "Address",

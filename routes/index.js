@@ -56,7 +56,7 @@ function route_get_tx(res, txid) {
                       txid: rtx.txid,
                       vin: rvin,
                       vout: rvout,
-                      total: total.toFixed(4),
+                      total: total.toFixed(8),
                       timestamp: rtx.time,
                       blockhash: '-',
                       blockindex: -1,
@@ -67,7 +67,7 @@ function route_get_tx(res, txid) {
                       txid: rtx.txid,
                       vin: rvin,
                       vout: rvout,
-                      total: total.toFixed(4),
+                      total: total.toFixed(8),
                       timestamp: rtx.time,
                       blockhash: rtx.blockhash,
                       blockindex: rtx.blockheight,
@@ -170,7 +170,9 @@ router.get('/richlist', function(req, res) {
               distb: distribution.t_26_50,
               distc: distribution.t_51_75,
               distd: distribution.t_76_100,
-              diste: distribution.t_101plus,
+              diste: distribution.t_101_1000,
+              distf: distribution.t_1001_2000,
+              distg: distribution.t_2001plus,
               show_dist: settings.richlist.distribution,
               show_received: settings.richlist.received,
               show_balance: settings.richlist.balance,
@@ -235,15 +237,15 @@ router.post('/search', function(req, res) {
   var query = req.body.search;
   if (query.length == 64) {
     if (query == settings.genesis_tx) {
-      res.redirect('/block/' + settings.genesis_block);
+      res.redirect('./block/' + settings.genesis_block);
     } else {
       db.get_tx(query, function(tx) {
         if (tx) {
-          res.redirect('/tx/' +tx.txid);
+          res.redirect('./tx/' +tx.txid);
         } else {
           lib.get_block(query, function(block) {
             if (block != 'There was an error. Check your console.') {
-              res.redirect('/block/' + query);
+              res.redirect('./block/' + query);
             } else {
               route_get_index(res, locale.ex_search_error + query );
             }
@@ -254,11 +256,11 @@ router.post('/search', function(req, res) {
   } else {
     db.get_address(query, function(address) {
       if (address) {
-        res.redirect('/address/' + address.a_id);
+        res.redirect('./address/' + address.a_id);
       } else {
         lib.get_blockhash(query, function(hash) {
           if (hash != 'There was an error. Check your console.') {
-            res.redirect('/block/' + hash);
+            res.redirect('./block/' + hash);
           } else {
             route_get_index(res, locale.ex_search_error + query );
           }
