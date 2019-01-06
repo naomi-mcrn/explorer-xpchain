@@ -25,6 +25,7 @@ function usage() {
   console.log('update       Updates index from last sync to current block');
   console.log('check        checks index for (and adds) any missing transactions/addresses');
   console.log('reindex      Clears index then resyncs from genesis to current block');
+  console.log('richlist     only richlist update');
   console.log('');
   console.log('notes:'); 
   console.log('* \'current block\' is the latest created block when script is executed.');
@@ -36,7 +37,7 @@ function usage() {
 }
 
 // check options
-console.log(process.argv.length);
+//console.log(process.argv.length);
 if (process.argv[2] == 'index') {
   if (process.argv.length <= 3) {
     usage();
@@ -51,7 +52,7 @@ if (process.argv[2] == 'index') {
       }
       if (startidx < 1 || isNaN(startidx)){ startidx = 1; }
       if (maxcnt < 0 || isNaN(maxcnt)){ maxcnt = -1; }
-      console.log("%s, %s", startidx, maxcnt);
+      //console.log("%s, %s", startidx, maxcnt);
     //}
     switch(process.argv[3])
     {
@@ -63,6 +64,9 @@ if (process.argv[2] == 'index') {
       break;
     case 'reindex':
       mode = 'reindex';
+      break;
+    case 'richlist':
+      mode = 'richlist';
       break;
     default:
       usage();
@@ -221,13 +225,20 @@ is_locked(function (exists) {
                     }
                     console.log("update %s to %s (%s)", startidx - 1, endidx, maxcnt);
                     db.update_tx_db(settings.coin, stats.last, endidx, settings.update_timeout, function(){
-                      db.update_richlist('received', function(){
-                        db.update_richlist('balance', function(){
+                      //db.update_richlist('received', function(){
+                        //db.update_richlist('balance', function(){
                           db.get_stats(settings.coin, function(nstats){
                             console.log('update complete (block: %s, count: %s)', nstats.last, maxcnt);
                             exit();
                           });
-                        });
+                        //});
+                      //});
+                    });
+                  } else if(mode == 'richlist'){
+                    db.update_richlist('received', function(){
+                      db.update_richlist('balance', function(){
+                        console.log('richlist update complete');
+                        exit();
                       });
                     });
                   }
