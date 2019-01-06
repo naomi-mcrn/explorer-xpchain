@@ -10,7 +10,8 @@ block content
     .panel.panel-default.panel-address-summary
       .panel-heading(style='position:relative;')        
         strong #{address.a_id} 
-          label.label.label-success: =rank  
+          if false
+            label.label.label-success: =rank  
         if settings.labels[address.a_id]
           if settings.labels[address.a_id].type  
             label(class='label label-#{settings.labels[address.a_id].type} pull-right hidden-xs', style='margin-left:15px;')
