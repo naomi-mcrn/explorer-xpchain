@@ -4,13 +4,14 @@ block content
   - var balance = (address.received - address.sent) / 10000;
   - var sent = address.sent /10000
   - var received = address.received / 10000
-  - var rank = "Rank " + address.rank
+  - var rawrnk = address.rank 
+  - if (rawrnk < 0) { rawrnk = "3001+"; }
+  - var rank = "Rank " + rawrnk
     img.qrcode.pull-right.hidden-xs(src='/qr/#{address.a_id}')
   .col-xs-12.col-md-10.col-md-offset-1
     .panel.panel-default.panel-address-summary
       .panel-heading(style='position:relative;')        
         strong #{address.a_id} 
-          if false
             label.label.label-success: =rank  
         if settings.labels[address.a_id]
           if settings.labels[address.a_id].type  
