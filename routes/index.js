@@ -255,7 +255,8 @@ router.get('/block/:hash', function(req, res) {
 });
 
 router.get('/address/:hash', function(req, res) {
-  route_get_address_with_rank(res, req.param('hash'), settings.txcount);
+  //route_get_address_with_rank(res, req.param('hash'), settings.txcount);
+  route_get_address(res, req.param('hash'), settings.txcount); //rank not work at POOR vps
 });
 
 router.get('/address/:hash/:count', function(req, res) {
