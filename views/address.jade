@@ -7,7 +7,7 @@ block content
   - var rawrnk = address.rank 
   - if (rawrnk < 0) { rawrnk = "3001+"; }
   - var rank = "Rank " + rawrnk
-    img.qrcode.pull-right.hidden-xs(src='/qr/#{address.a_id}')
+    img.qrcode.pull-right.hidden-xs(src='./qr/#{address.a_id}')
   .col-xs-12.col-md-10.col-md-offset-1
     .panel.panel-default.panel-address-summary
       .panel-heading(style='position:relative;')        
@@ -48,7 +48,7 @@ block content
         strong #{settings.locale.ex_latest_transactions}
       table.table.table-bordered.table-striped.history-table
         include ./includes/address_history.jade  
-    .panel.panel-default.hidden-lg.hidden-md
+    .panel.panel-default.hidden-lg.hidden-md.hidden-sm
       .panel-heading
         strong #{settings.locale.ex_latest_transactions}
       table.table.table-bordered.table-striped
